@@ -13,7 +13,12 @@ config = {
     'install_requires': ['nose'],
     'packages': ['spaceship'],
     'scripts': [],
-    'name': 'spaceship'
+    'name': 'spaceship',
+    'entry_points': {
+        'console_scripts': [
+            'spaceship = spaceship.__main__:main'
+        ]
+    },
 }
 
 setup(**config)
