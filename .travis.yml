@@ -1,6 +1,10 @@
 language: python
 python:
   - "3.4"
+addons:
+  apt:
+    packages:
+    - libsdl1.2-dev
 install:
   - pip install .
   - pip install -r requirements.txt
