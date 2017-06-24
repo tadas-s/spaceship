@@ -30,28 +30,30 @@ class Display(Process):
 
         angle = 0.0
 
-        cleaner = pygame.Surface([WIDTH, HEIGHT])
-        cleaner.set_alpha(64)
-        cleaner.fill(BLACK)
+        overlay = pygame.Surface([WIDTH, HEIGHT])
+        overlay.set_alpha(32)
+        overlay.fill(BLACK)
+
+        pygame.draw.line(overlay, WHITE, [0, int(HEIGHT / 2)], [WIDTH, int(HEIGHT / 2)])
+        pygame.draw.line(overlay, WHITE, [int(WIDTH / 2), 0], [int(WIDTH / 2), HEIGHT])
+
+        for r in range(1, 10):
+            pygame.draw.circle(overlay, WHITE, [int(WIDTH / 2), int(HEIGHT / 2)], r * 40, 1)
 
         while not self.quit.value:
-            self.window.blit(cleaner, [0, 0])
-
             pygame.draw.line(
                 self.window, GREEN,
                 [int(WIDTH / 2), int(HEIGHT / 2)],
-                [int((HEIGHT / 2)*sin(angle) + WIDTH / 2), int((HEIGHT / 2)*cos(angle) + HEIGHT / 2)],
+                [int((HEIGHT / 2)*sin(angle) + WIDTH / 2),
+                 int((HEIGHT / 2)*cos(angle) + HEIGHT / 2)],
                 5
             )
 
-            angle += 0.1
+            self.window.blit(overlay, [0, 0])
 
-            pygame.draw.line(self.window, WHITE, [0, int(HEIGHT / 2)], [WIDTH, int(HEIGHT / 2)])
-            pygame.draw.line(self.window, WHITE, [int(WIDTH / 2), 0], [int(WIDTH / 2), HEIGHT])
+            angle += 0.02
 
-            for r in range(1, 10):
-                pygame.draw.circle(self.window, WHITE, [int(WIDTH / 2), int(HEIGHT / 2)], r * 40, 1)
             pygame.display.update()
-            sleep(0.05)
+            sleep(0.01)
 
         pygame.quit()
