@@ -26,9 +26,12 @@ class Display(BaseProcess):
             pygame.display.set_mode((800, 600), 0, 32).subsurface((LEFT, TOP, WIDTH, HEIGHT))
 
         angle = 0.0
+        line_width = 5
+        overlay_alpha = 32
+        speed = 0.01
 
         overlay = pygame.Surface([WIDTH, HEIGHT])
-        overlay.set_alpha(32)
+        overlay.set_alpha(overlay_alpha)
         overlay.fill(BLACK)
 
         pygame.draw.line(overlay, WHITE, [0, int(HEIGHT / 2)], [WIDTH, int(HEIGHT / 2)])
@@ -37,13 +40,15 @@ class Display(BaseProcess):
         for r in range(1, 10):
             pygame.draw.circle(overlay, WHITE, [int(WIDTH / 2), int(HEIGHT / 2)], r * 40, 1)
 
-        line_width = 5
-
         while not self.quit():
             if not self.incoming.empty():
                 msg = self.incoming.get_nowait()
                 if msg[0] == 'analog_1':
-                    line_width = msg[1]
+                    line_width = msg[1] * 5
+                if msg[0] == 'analog_2':
+                    overlay_alpha = msg[1] * 32
+                if msg[0] == 'analog_3':
+                    speed = msg[1] * 0.02
 
             pygame.draw.line(
                 self.window, GREEN,
@@ -53,9 +58,10 @@ class Display(BaseProcess):
                 int(line_width)
             )
 
+            overlay.set_alpha(overlay_alpha)
             self.window.blit(overlay, [0, 0])
 
-            angle += 0.02
+            angle += speed
 
             pygame.display.update()
             sleep(0.01)
