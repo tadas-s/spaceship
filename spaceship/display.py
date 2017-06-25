@@ -1,4 +1,4 @@
-from multiprocessing import Process
+from .base_process import BaseProcess
 from time import sleep
 import pygame
 from math import sin, cos, pi
@@ -13,14 +13,11 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (70, 255, 10)
 
-# TODO: https://www.pygame.org/docs/ref/surface.html#pygame.Surface.subsurface
-# Use subsurface.
 
-class Display(Process):
+class Display(BaseProcess):
+
     def __init__(self, logger=None, quit_flag=None):
-        self.logger = logger
-        self.quit = quit_flag
-        super(Display, self).__init__()
+        super(Display, self).__init__(logger=logger, quit_flag=quit_flag)
 
     def run(self):
         pygame.init()
@@ -40,13 +37,20 @@ class Display(Process):
         for r in range(1, 10):
             pygame.draw.circle(overlay, WHITE, [int(WIDTH / 2), int(HEIGHT / 2)], r * 40, 1)
 
-        while not self.quit.value:
+        line_width = 5
+
+        while not self.quit():
+            if not self.incoming.empty():
+                msg = self.incoming.get_nowait()
+                if msg[0] == 'analog_in_1':
+                    line_width = msg[1]
+
             pygame.draw.line(
                 self.window, GREEN,
                 [int(WIDTH / 2), int(HEIGHT / 2)],
                 [int((HEIGHT / 2)*sin(angle) + WIDTH / 2),
                  int((HEIGHT / 2)*cos(angle) + HEIGHT / 2)],
-                5
+                int(line_width)
             )
 
             self.window.blit(overlay, [0, 0])

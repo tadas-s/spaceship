@@ -1,22 +1,12 @@
 import multiprocessing as mp
-from multiprocessing import Process, Value
+from multiprocessing import Value
 import logging
-from time import sleep
 import readline
 import atexit
 import os
+import re
 from .display import Display
-
-class DummyProcess(Process):
-    def __init__(self, logger=None, quit_flag=None):
-        self.logger = logger
-        self.quit = quit_flag
-        super(DummyProcess, self).__init__()
-
-    def run(self):
-        while not self.quit.value:
-            self.logger.info("Hello world!")
-            sleep(1)
+from .input.analog_in import AnalogIn
 
 def main(args=None):
     mp.log_to_stderr()
@@ -34,16 +24,26 @@ def main(args=None):
 
     q = Value('i', 0)
 
-    p = Display(logger=logger, quit_flag=q)
-    p.start()
+    p1 = Display(logger=logger, quit_flag=q)
+    p1.start()
+
+    p2 = AnalogIn(logger=logger, quit_flag=q)
+    p2.start()
 
     cmd = None
     while cmd != 'quit':
         cmd = input('--> ')
-        print("Command: %s" % cmd)
+
+        if re.match('^analog_in_(\d+)=([\d]+(\.\d+)?)$', cmd):
+            logger.info('Sending msg: ' + str((cmd.split("=")[0], float(cmd.split("=")[1]))))
+            p1.incoming.put(
+                (cmd.split("=")[0], float(cmd.split("=")[1]))
+            )
 
     q.value = 1
-    p.join()
+
+    p1.join()
+    p2.join()
 
     logger.info("I'm done here.")
 
