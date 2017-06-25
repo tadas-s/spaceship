@@ -12,7 +12,7 @@ class AnalogIn(BaseProcess):
         dummy_1 = 0.0
 
         while not self.quit():
-            dummy_1 += randrange(-100, 100) / 1000
+            dummy_1 += randrange(1, 30) / 1000
             dummy_1 = dummy_1 % 100
-            self.outgoing.put(('analog_1', dummy_1))
+            self.outgoing.put(('analog_1', randrange(1, 100)))
             sleep(0.1)

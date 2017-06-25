@@ -42,7 +42,7 @@ class Display(BaseProcess):
         while not self.quit():
             if not self.incoming.empty():
                 msg = self.incoming.get_nowait()
-                if msg[0] == 'analog_in_1':
+                if msg[0] == 'analog_1':
                     line_width = msg[1]
 
             pygame.draw.line(

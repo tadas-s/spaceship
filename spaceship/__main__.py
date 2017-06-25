@@ -7,6 +7,7 @@ import os
 import re
 from .display import Display
 from .input.analog_in import AnalogIn
+from .message_router import  MessageRouter
 
 def main(args=None):
     mp.log_to_stderr()
@@ -30,11 +31,18 @@ def main(args=None):
     p2 = AnalogIn(logger=logger, quit_flag=q)
     p2.start()
 
+    p3 = MessageRouter(
+        logger=logger,
+        quit_flag=q,
+        routes={p2.outgoing: [p1.incoming]}
+    )
+    p3.start()
+
     cmd = None
     while cmd != 'quit':
         cmd = input('--> ')
 
-        if re.match('^analog_in_(\d+)=([\d]+(\.\d+)?)$', cmd):
+        if re.match('^analog_(\d+)=([\d]+(\.\d+)?)$', cmd):
             logger.info('Sending msg: ' + str((cmd.split("=")[0], float(cmd.split("=")[1]))))
             p1.incoming.put(
                 (cmd.split("=")[0], float(cmd.split("=")[1]))
@@ -44,6 +52,7 @@ def main(args=None):
 
     p1.join()
     p2.join()
+    p3.join()
 
     logger.info("I'm done here.")
 
