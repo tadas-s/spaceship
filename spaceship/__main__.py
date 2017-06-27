@@ -12,7 +12,7 @@ from .message_router import  MessageRouter
 def main(args=None):
     mp.log_to_stderr()
     logger = mp.get_logger()
-    logger.setLevel(logging.INFO)
+    logger.setLevel((os.environ.get('LOG_LEVEL') or 'INFO').upper())
 
     histfile = os.path.join(os.path.expanduser("~"), ".spaceship_history")
     try:
