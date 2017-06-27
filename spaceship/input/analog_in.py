@@ -3,7 +3,6 @@ from time import sleep
 from ADCPi.ABE_helpers import ABEHelpers
 from ADCPi.ABE_ADCPi import ADCPi
 
-
 class AnalogIn(BaseProcess):
 
     def __init__(self, logger=None, quit_flag=None):
@@ -22,16 +21,16 @@ class AnalogIn(BaseProcess):
         # set initial values to None to trigger
         # readout messages on startup
         voltages = [
-            None, None, None, None, None, None, None, None
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
         ]
 
         while not self.quit():
             for port in range(0, 8):
                 voltage = adc.read_voltage(port + 1)
 
-                if voltages[port] != voltage:
+                if abs(voltages[port] - voltage) > 0.05:
                     voltages[port] = voltage
                     self.outgoing.put(('analog_%i' % port, voltage))
                     self.logger.debug('analog_%i=%f' % (port, voltage))
 
-            sleep(0.02)
+            sleep(0.05)
