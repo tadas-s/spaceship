@@ -3,6 +3,7 @@ from time import sleep
 from ADCPi.ABE_helpers import ABEHelpers
 from ADCPi.ABE_ADCPi import ADCPi
 
+
 class AnalogIn(BaseProcess):
 
     def __init__(self, logger=None, quit_flag=None):
@@ -16,7 +17,7 @@ class AnalogIn(BaseProcess):
             self.logger.warn('No i2c bus? Quitting.')
             return
 
-        adc = ADCPi(bus, 0x6e, 0x6f, 12)
+        adc = ADCPi(bus, 0x68, 0x69, 12)
 
         # set initial values to None to trigger
         # readout messages on startup
