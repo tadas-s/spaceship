@@ -19,15 +19,10 @@ class AnalogIn(BaseProcess):
 
         adc = ADCPi(bus, 0x6e, 0x6f, 12)
 
+        # set initial values to None to trigger
+        # readout messages on startup
         voltages = [
-            adc.read_voltage(1),
-            adc.read_voltage(2),
-            adc.read_voltage(3),
-            adc.read_voltage(4),
-            adc.read_voltage(5),
-            adc.read_voltage(6),
-            adc.read_voltage(7),
-            adc.read_voltage(8)
+            None, None, None, None, None, None, None, None
         ]
 
         while not self.quit():
