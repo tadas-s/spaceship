@@ -19,16 +19,19 @@ class DigitalIn(BaseProcess):
 
         digital_in = IoPi(bus, 0x20)
         digital_in.set_port_direction(0, 0xFF)
+        digital_in.set_port_direction(1, 0xFF)
         digital_in.set_port_pullups(0, 0xFF)
+        digital_in.set_port_pullups(1, 0xFF)
 
         # set initial values to something unusual to trigger
         # readout messages on startup
         pins = [
+            None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None
         ]
 
         while not self.quit():
-            for port in range(0, 8):
+            for port in range(0, 16):
                 pin = digital_in.read_pin(port + 1)
 
                 if pins[port] != pin:
