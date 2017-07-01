@@ -47,7 +47,9 @@ class DigitalIn(BaseProcess):
                     self.outgoing.put(('digital_%i' % port, pin))
                     self.logger.debug('digital_%i=%i' % (port, pin))
 
-            for port in range(0, 16):
+            # only first 5 ports are usual switches, next 7 ports
+            # are for push-button matrix
+            for port in range(0, 5):
                 pin = bus2.read_pin(port + 1)
 
                 if pins[port + 16] != pin:
@@ -55,4 +57,9 @@ class DigitalIn(BaseProcess):
                     self.outgoing.put(('digital_%i' % (port + 16), pin))
                     self.logger.debug('digital_%i=%i' % ((port + 16), pin))
 
-            sleep(0.1)
+            # 3x4 push-button matrix scan
+            # First 5 inputs stay as in
+            bus2.set_port_direction(0, 0xFF)
+            bus2.set_port_direction(1, 0xFF)
+
+            sleep(0.01)
